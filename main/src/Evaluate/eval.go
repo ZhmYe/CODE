@@ -3,6 +3,7 @@ package Evaluate
 import (
 	"bufio"
 	"fmt"
+	"main/src/Config"
 	"main/src/Execution"
 	"main/src/Smallbank"
 	"os"
@@ -19,7 +20,7 @@ func EvaluateTpsAndAbortNumberWithDifferentConcurrency(path string) {
 	concurrencys := []int{2, 4, 8, 16, 32, 64, 128, 256}
 	currentTime := time.Now()
 	format := "2006-01-02-15-04-05"
-	filePath := "./" + path + currentTime.Format(format) + ".txt"
+	filePath := Config.GlobalConfig.LogPath + "/" + path + currentTime.Format(format) + ".txt"
 	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0666)
 	writer := bufio.NewWriter(file)
 
@@ -33,13 +34,13 @@ func EvaluateTpsAndAbortNumberWithDifferentConcurrency(path string) {
 			executor := Execution.NewExecutor(Execution.ExecuteWithFabric, concurrency, txs[i])
 			executor.SplitTransactions()
 			finalTimeDuration, finalAbortRate := time.Duration(0), float64(0)
-			for k := 0; k < 100; k++ {
+			for k := 0; k < 1; k++ {
 				timeDuration, abortRate := executor.Execute()
 				finalTimeDuration += timeDuration
 				finalAbortRate += abortRate
 			}
-			finalTimeDuration /= 100
-			finalAbortRate /= 100
+			finalTimeDuration /= 1
+			finalAbortRate /= 1
 			writer.WriteString("	concurrency=" + strconv.Itoa(concurrency))
 			writer.WriteString("	Time=" + finalTimeDuration.String())
 			writer.WriteString("	AbortRate=" + strconv.FormatFloat(finalAbortRate*100, 'f', 2, 64))
