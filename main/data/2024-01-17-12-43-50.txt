@@ -1,0 +1,27 @@
+skew=0.60
+	concurrency=2	Time=139.789386ms	AbortRate=0.02
+	concurrency=4	Time=117.264795ms	AbortRate=0.05
+	concurrency=8	Time=99.184689ms	AbortRate=0.16
+	concurrency=16	Time=79.712159ms	AbortRate=0.33
+	concurrency=32	Time=64.636542ms	AbortRate=0.70
+	concurrency=64	Time=62.523815ms	AbortRate=1.30
+	concurrency=128	Time=52.836068ms	AbortRate=2.68
+	concurrency=256	Time=56.724567ms	AbortRate=4.70
+skew=0.80
+	concurrency=2	Time=125.14653ms	AbortRate=0.22
+	concurrency=4	Time=93.411187ms	AbortRate=0.46
+	concurrency=8	Time=81.032882ms	AbortRate=0.95
+	concurrency=16	Time=66.369273ms	AbortRate=2.08
+	concurrency=32	Time=54.221046ms	AbortRate=3.85
+	concurrency=64	Time=47.000303ms	AbortRate=6.55
+	concurrency=128	Time=45.908962ms	AbortRate=10.45
+	concurrency=256	Time=42.712886ms	AbortRate=15.14
+skew=0.99
+	concurrency=2	Time=117.046902ms	AbortRate=0.69
+	concurrency=4	Time=96.050164ms	AbortRate=1.96
+	concurrency=8	Time=83.489008ms	AbortRate=4.42
+	concurrency=16	Time=72.367431ms	AbortRate=8.56
+	concurrency=32	Time=55.263941ms	AbortRate=13.90
+	concurrency=64	Time=49.639738ms	AbortRate=20.27
+	concurrency=128	Time=44.62967ms	AbortRate=27.34
+	concurrency=256	Time=38.454271ms	AbortRate=34.14
