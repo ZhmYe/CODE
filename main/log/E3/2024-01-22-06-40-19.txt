@@ -1,0 +1,5 @@
+Concurrency=64
+Instance 0	Concurrency=24	Time=203.558397ms	Tx Number=3750	Abort Rate=0.59
+Instance 1	Concurrency=16	Time=188.153065ms	Tx Number=2500	Abort Rate=0.40
+Instance 2	Concurrency=16	Time=188.990873ms	Tx Number=2500	Abort Rate=0.40
+Instance 3	Concurrency=8	Time=147.499701ms	Tx Number=1250	Abort Rate=0.16

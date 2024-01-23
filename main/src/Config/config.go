@@ -15,4 +15,4 @@ type Config struct {
 	ParallelingNumber int // 并发粒度
 }
 
-var GlobalConfig = Config{OriginKeys: 10000, HotKey: 0.2, HotKeyRate: 1, Path: "leveldb", ZipfianConstant: 0.2, BlockSize: 200, instanceNumber: 4, ParallelingNumber: runtime.NumCPU()}
+var GlobalConfig = Config{OriginKeys: 10000, HotKey: 0.2, HotKeyRate: 1, Path: "leveldb", ZipfianConstant: 0.6, BlockSize: 200, instanceNumber: 4, ParallelingNumber: runtime.NumCPU()}

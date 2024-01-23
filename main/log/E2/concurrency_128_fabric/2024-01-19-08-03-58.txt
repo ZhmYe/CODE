@@ -1,0 +1,26 @@
+BlockSize=100
+skew=0.60
+	Complete Concurrency
+		Time=2.004864ms		AbortRate=2.00
+	Optimal Concurrency
+		Time=1.980713ms		AbortRate=2.00
+skew=0.70
+	Complete Concurrency
+		Time=2.537943ms		AbortRate=7.00
+	Optimal Concurrency
+		Time=2.046658ms		AbortRate=7.00
+skew=0.80
+	Complete Concurrency
+		Time=1.97309ms		AbortRate=8.00
+	Optimal Concurrency
+		Time=2.029131ms		AbortRate=8.00
+skew=0.90
+	Complete Concurrency
+		Time=2.190969ms		AbortRate=17.00
+	Optimal Concurrency
+		Time=2.005708ms		AbortRate=17.00
+skew=0.99
+	Complete Concurrency
+		Time=2.00162ms		AbortRate=14.00
+	Optimal Concurrency
+		Time=2.23188ms		AbortRate=14.00

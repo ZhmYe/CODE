@@ -3,6 +3,7 @@ package Execution
 import (
 	"bufio"
 	"fmt"
+	"main/src/Smallbank"
 	"os"
 	"strconv"
 	"testing"
@@ -62,5 +63,34 @@ func Test4Execution(t *testing.T) {
 	err = file.Close()
 	if err != nil {
 		return
+	}
+}
+func Test4PreemptiveExecutor(t *testing.T) {
+	savingsKeys, checkingsKeys := Smallbank.GlobalSmallBank.GetKeys()
+	keys := make([]string, 0)
+	keys = append(keys, savingsKeys...)
+	keys = append(keys, checkingsKeys...)
+	fmt.Println(len(keys))
+	skews := []float64{0.6}
+	generator := NewGenerator(skews)
+	txs := generator.GenerateTransactions(10000)
+	concurrencys := []int{1}
+	for i, _ := range skews {
+		fmt.Println("skew=" + strconv.FormatFloat(skews[i], 'f', 2, 64) + "\n")
+		for _, concurrency := range concurrencys {
+			executor := NewPreemptiveExecutor(keys, concurrency, txs[i])
+			finalTimeDuration, finalAbortRate := time.Duration(0), float64(0)
+			for k := 0; k < 1; k++ {
+				timeDuration, abortRate := executor.Execute()
+				finalTimeDuration += timeDuration
+				finalAbortRate += abortRate
+			}
+			finalTimeDuration /= 1
+			finalAbortRate /= 1
+			fmt.Print("	concurrency=" + strconv.Itoa(concurrency))
+			fmt.Print("	Time=" + finalTimeDuration.String())
+			fmt.Print("	AbortRate=" + strconv.FormatFloat(finalAbortRate*100, 'f', 2, 64))
+			fmt.Println()
+		}
 	}
 }

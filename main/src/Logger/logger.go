@@ -3,7 +3,9 @@ package Logger
 import (
 	"bufio"
 	"fmt"
+	"main/src/Config"
 	"os"
+	"time"
 )
 
 type Logger struct {
@@ -14,7 +16,11 @@ type Logger struct {
 
 func NewLogger(path string) *Logger {
 	logger := new(Logger)
-	logger.path = path
+	format := "2006-01-02-15-04-05"
+	currentTime := time.Now()
+	filePath := Config.GlobalConfig.LogPath + "/" + path + currentTime.Format(format) + ".txt"
+	fmt.Println(filePath)
+	logger.path = filePath
 	var err error
 	logger.file, err = os.OpenFile(logger.path, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
@@ -40,4 +46,7 @@ func (l *Logger) Finish() {
 	if err != nil {
 		return
 	}
+}
+func (l *Logger) Wrap() {
+	l.Write("\n")
 }

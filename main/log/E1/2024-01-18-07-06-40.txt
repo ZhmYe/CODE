@@ -1,0 +1,15 @@
+CPU=16
+skew=0.60
+	concurrency=1	Time=1.393088883s	AbortRate=0.00
+	concurrency=2	Time=1.398794036s	AbortRate=0.00
+	concurrency=4	Time=973.900555ms	AbortRate=0.04
+	concurrency=8	Time=574.987701ms	AbortRate=0.16
+	concurrency=16	Time=382.999363ms	AbortRate=0.43
+	concurrency=32	Time=255.086196ms	AbortRate=0.81
+	concurrency=64	Time=191.426403ms	AbortRate=1.47
+	concurrency=128	Time=163.110548ms	AbortRate=2.77
+	concurrency=256	Time=146.218949ms	AbortRate=4.83
+	concurrency=512	Time=141.970191ms	AbortRate=8.05
+	concurrency=1024	Time=134.828567ms	AbortRate=13.25
+	concurrency=2048	Time=135.219061ms	AbortRate=19.68
+	concurrency=4096	Time=127.393179ms	AbortRate=27.40

@@ -28,7 +28,7 @@ func NewNeZha(txs []*Transaction) *NeZha {
 func (nezha *NeZha) getACG() {
 	nezha.acg = Utils.GetACG(nezha.txs)
 }
-func (nezha *NeZha) getAbortRate() float64 {
+func (nezha *NeZha) GetAbortRate() float64 {
 	abort := 0
 	for _, tx := range nezha.txs {
 		if tx.CheckAbort() {

@@ -1,6 +1,8 @@
 package Fabric
 
-import "main/src/Blockchain"
+import (
+	"main/src/Blockchain"
+)
 
 type Transaction = Blockchain.Transaction
 type Fabric struct {

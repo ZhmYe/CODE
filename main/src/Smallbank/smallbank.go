@@ -24,6 +24,10 @@ type Smallbank struct {
 	r         *rand.Rand
 }
 
+func (s *Smallbank) GetKeys() ([]string, []string) {
+	return s.Savings, s.Checkings
+}
+
 // TransactSavings 向储蓄账户增加一定余额
 func (s *Smallbank) TransactSavings(account string, amount int) *Transaction {
 	r := Op{
