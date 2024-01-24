@@ -1,9 +1,11 @@
 package Consensus
 
 import (
-	"main/src/Algorithm/Nezha"
 	"main/src/Blockchain"
 	"main/src/Execution"
+	"main/src/Smallbank"
+	"main/src/Sys"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -137,9 +139,21 @@ func (i *Instance) RunInPreBatched() {
 			go func(batchTransctions []*Transaction) {
 				defer wg4batch.Done()
 				// 串行相当于并发度为1
-				executor := Execution.NewExecutor(Execution.ExecuteWithFabric, 1, batchTransctions)
-				executor.SplitTransactions()
-				executor.SimpleExecute()
+				for _, tx := range batchTransctions {
+					Sys.GoRoutineSleep()
+					for _, op := range tx.Ops {
+						if op.Type == Blockchain.OpRead {
+							readResult, _ := strconv.Atoi(Smallbank.GlobalSmallBank.Read(op.Key))
+							op.ReadResult = strconv.Itoa(readResult)
+						}
+						if op.Type == Blockchain.OpWrite {
+							readResult, _ := strconv.Atoi(Smallbank.GlobalSmallBank.Read(op.Key))
+							amount, _ := strconv.Atoi(op.Val)
+							WriteResult := readResult + amount
+							op.WriteResult = strconv.Itoa(WriteResult)
+						}
+					}
+				}
 			}(tmpBatchItem)
 		}
 		wg4batch.Wait()
@@ -199,38 +213,17 @@ func (i *Instance) RunInPreBatched() {
 	finalAbortRate /= 100
 	i.SetReport(len(i.transactions), finalTimeDuration, finalAbortRate)
 }
-func worker(tasks <-chan *Transaction, wg *sync.WaitGroup) {
-	defer wg.Done()
-	for task := range tasks {
-		executor := Execution.NewExecutor(Execution.ExecuteWithFabric, 1, []*Transaction{task})
-		executor.SplitTransactions()
-		executor.SimpleExecute()
-	}
-}
 func (i *Instance) RunInPreemptive() {
-	// 一共concurrency个线程，每个线程通过channel抢占式的得到下一个tx，所有tx全部在线程内乐观并发
-	// 执行全部结束后，进行abort
-	finalTimeDuration := time.Duration(0)
-	finalAbortRate := float64(0)
-	for epoch := 0; epoch < 100; epoch++ {
-		startTime := time.Now()
-		numTask := len(i.transactions)
-		tasks := make(chan *Transaction, numTask)
-		var wg4worker sync.WaitGroup
-		wg4worker.Add(i.concurrency)
-		for x := 0; x < i.concurrency; x++ {
-			go worker(tasks, &wg4worker)
-		}
-		for _, transaction := range i.transactions {
-			tasks <- transaction
-		}
-		close(tasks)
-		wg4worker.Wait()
-		nezha := Nezha.NewNeZha(i.transactions)
-		nezha.TransactionSort()
-		abortRate := nezha.GetAbortRate()
+	savingsKeys, checkingsKeys := Smallbank.GlobalSmallBank.GetKeys()
+	keys := make([]string, 0)
+	keys = append(keys, savingsKeys...)
+	keys = append(keys, checkingsKeys...)
+	executor := Execution.NewPreemptiveExecutor(keys, i.concurrency, i.transactions)
+	finalTimeDuration, finalAbortRate := time.Duration(0), float64(0)
+	for k := 0; k < 100; k++ {
+		timeDuration, abortRate := executor.Execute()
+		finalTimeDuration += timeDuration
 		finalAbortRate += abortRate
-		finalTimeDuration += time.Since(startTime)
 	}
 	finalTimeDuration /= 100
 	finalAbortRate /= 100

@@ -116,13 +116,12 @@ func EvaluateAbortRateAndTpsWithDifferentInstanceMode(path string) {
 	Sys.SetCPU(8)
 	modes := []Consensus.InstanceMode{Consensus.Default, Consensus.PreBatched, Consensus.Preemptive}
 	logger := Logger.NewLogger(path)
-	logger.Write("Concurrency=64")
+	logger.Write("Concurrency=128")
 	logger.Wrap()
+	skews := []float64{0.6, 0.8, 0.99}
 	for _, mode := range modes {
-		generator := Execution.NewGenerator([]float64{0.6})
-		transactions := generator.GenerateTransactions(1000)[0]
-		instance := Consensus.NewInstance()
-		instance.SetMode(mode)
+		generator := Execution.NewGenerator(skews)
+		transactions := generator.GenerateTransactions(10000)
 		switch mode {
 		case Consensus.Default:
 			logger.Write("mode=Default")
@@ -130,17 +129,22 @@ func EvaluateAbortRateAndTpsWithDifferentInstanceMode(path string) {
 			logger.Write("mode=PreBatched")
 		case Consensus.Preemptive:
 			logger.Write("mode=Preemptive")
-
 		}
-		logger.Wrap()
-		instance.SetConcurrency(64)
-		instance.InjectTransactions(transactions)
-		instance.Run()
-		report := instance.GetReport()
-		logger.Write("\tTx Number=" + strconv.Itoa(report.GetProcessTransactionNumber()))
-		logger.Write("\tTime=" + report.GetProcessTime().String())
-		logger.Write("\tAbort Rate=" + strconv.FormatFloat(report.GetAbortRate()*100, 'f', 2, 64))
-		logger.Wrap()
+		for i, txs := range transactions {
+			instance := Consensus.NewInstance()
+			instance.SetMode(mode)
+			logger.Wrap()
+			logger.Write("skew=" + strconv.FormatFloat(skews[i], 'f', 2, 64))
+			logger.Wrap()
+			instance.SetConcurrency(128)
+			instance.InjectTransactions(txs)
+			instance.Run()
+			report := instance.GetReport()
+			logger.Write("\tTx Number=" + strconv.Itoa(report.GetProcessTransactionNumber()))
+			logger.Write("\tTime=" + report.GetProcessTime().String())
+			logger.Write("\tAbort Rate=" + strconv.FormatFloat(report.GetAbortRate()*100, 'f', 2, 64))
+			logger.Wrap()
+		}
 	}
 	logger.Finish()
 }

@@ -7,6 +7,7 @@ import (
 	"main/src/Algorithm/Nezha"
 	"main/src/Blockchain"
 	"main/src/Smallbank"
+	"main/src/Sys"
 	"strconv"
 	"sync"
 	"time"
@@ -59,10 +60,7 @@ func (e *Executor) SimpleExecute() (time.Duration, float64) {
 			tmpTx := tx
 			go func(tx *Blockchain.Transaction, smallbank *Smallbank.Smallbank) {
 				defer wg4tx.Done()
-				tmp := 0
-				for k := 0; k < 100000; k++ {
-					tmp++
-				}
+				Sys.GoRoutineSleep()
 				for _, op := range tx.Ops {
 					if op.Type == Blockchain.OpRead {
 						readResult, _ := strconv.Atoi(smallbank.Read(op.Key))
@@ -93,26 +91,26 @@ func (e *Executor) SimpleExecute() (time.Duration, float64) {
 			harmony := Harmony.NewHarmony(transactions)
 			harmony.TransactionSort()
 		}
-		var wg4exec sync.WaitGroup
-		wg4exec.Add(len(transactions))
-		for _, tx := range transactions {
-			tmpTx := tx
-			go func(tx *Blockchain.Transaction) {
-				if !tx.CheckAbort() {
-					for _, op := range tx.GetOps() {
-						if op.Type == Blockchain.OpWrite {
-							Smallbank.GlobalSmallBank.Write(op.Key, op.WriteResult)
-						}
-					}
-					tmp := 0
-					for k := 0; k < 100000; k++ {
-						tmp++
-					}
-				}
-				wg4exec.Done()
-			}(tmpTx)
-		}
-		wg4exec.Wait()
+		//var wg4exec sync.WaitGroup
+		//wg4exec.Add(len(transactions))
+		//for _, tx := range transactions {
+		//	tmpTx := tx
+		//	go func(tx *Blockchain.Transaction) {
+		//		if !tx.CheckAbort() {
+		//			for _, op := range tx.GetOps() {
+		//				if op.Type == Blockchain.OpWrite {
+		//					Smallbank.GlobalSmallBank.Write(op.Key, op.WriteResult)
+		//				}
+		//			}
+		//			tmp := 0
+		//			for k := 0; k < 100000; k++ {
+		//				tmp++
+		//			}
+		//		}
+		//		wg4exec.Done()
+		//	}(tmpTx)
+		//}
+		//wg4exec.Wait()
 	}
 	totalAbortNumber := 0
 	timeDuration := time.Since(startTime)

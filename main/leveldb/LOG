@@ -1,22 +1,6 @@
-=============== Jan 23, 2024 (UTC) ===============
-05:59:28.897409 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
-05:59:28.921532 db@open opening
-05:59:28.925232 version@stat F·[] S·0B[] Sc·[]
-05:59:28.935893 db@janitor F·2 G·0
-05:59:28.935917 db@open done T·14.355344ms
-05:59:30.118368 memdb@flush N·85716 S·3MiB
-05:59:30.178005 memdb@flush created L0@3 N·85716 S·1MiB "000..a5b,v80387":"fff..4ce,v19977"
-05:59:30.178050 version@stat F·[1] S·1MiB[1MiB] Sc·[0.25]
-05:59:30.193925 memdb@flush committed F·1 T·75.526693ms
-05:59:30.194877 journal@remove removed @1
-05:59:31.545684 memdb@flush N·84704 S·3MiB
-05:59:31.617170 memdb@flush created L0@5 N·84704 S·1MiB "000..a5b,v159759":"fff..e84,v94552"
-05:59:31.617224 version@stat F·[2] S·2MiB[2MiB] Sc·[0.50]
-05:59:31.629506 memdb@flush committed F·1 T·83.786916ms
-05:59:31.630861 journal@remove removed @2
-05:59:31.631785 table@compaction L0·2 -> L1·0 S·2MiB Q·174233
-05:59:31.691796 table@build created L1@6 N·20000 S·917KiB "000..a5b,v159759":"fff..4ce,v19977"
-05:59:31.691831 version@stat F·[0 1] S·917KiB[0B 917KiB] Sc·[0.00 0.01]
-05:59:31.713294 table@compaction committed F-1 S-1MiB Ke·0 D·150420 T·81.481348ms
-05:59:31.713651 table@remove removed @5
-05:59:31.713901 table@remove removed @3
+=============== Jan 24, 2024 (UTC) ===============
+05:15:05.311876 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+05:15:05.352022 db@open opening
+05:15:05.355606 version@stat F·[] S·0B[] Sc·[]
+05:15:05.361258 db@janitor F·2 G·0
+05:15:05.361283 db@open done T·9.185832ms

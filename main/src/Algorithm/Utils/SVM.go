@@ -3,6 +3,7 @@ package Utils
 import (
 	"main/src/Blockchain"
 	"main/src/Smallbank"
+	"main/src/Sys"
 	"sync"
 )
 
@@ -32,6 +33,16 @@ func NewSVMState(key string) *SVMState {
 	s.lastWriteFlag = false
 	return s
 }
+func (s *SVMState) Reset() {
+	s.txs = make([]*Transaction, 0)
+	s.lastWrite = ""
+	s.lastWriteTxId = -1
+	s.lastWriteFlag = false
+	s.version = -1
+}
+func (s *SVMState) GetTxs() []*Transaction {
+	return s.txs
+}
 func (s *SVMState) CheckVersion(v int) CheckVersionResult {
 	if s.version < v {
 		return HasBeenAbort
@@ -42,6 +53,7 @@ func (s *SVMState) CheckVersion(v int) CheckVersionResult {
 	}
 }
 func (s *SVMState) GetVersion() int {
+	s.UpdateVersion()
 	return s.version
 }
 func (s *SVMState) Append(tx *Transaction, version int) {
@@ -56,8 +68,9 @@ func (s *SVMState) UpdateVersion() {
 	lastWrite := ""
 	lastWriteTxId := -1
 	s.lastWriteFlag = false
+	shouldBeAbort := false
 	for _, tx := range s.txs {
-		if !tx.CheckAbort() {
+		if !tx.CheckAbort() && !shouldBeAbort {
 			version = tx.GetId()
 			// 同时需要更新最后的写操作结果和id
 			for _, op := range tx.GetOps() {
@@ -67,6 +80,14 @@ func (s *SVMState) UpdateVersion() {
 					s.lastWriteFlag = true
 				}
 			}
+		}
+		if tx.CheckAbort() {
+			if tx.HasWrite() {
+				shouldBeAbort = true
+			}
+		}
+		if shouldBeAbort {
+			tx.SetAbort()
 		}
 	}
 	s.version = version
@@ -87,9 +108,14 @@ const (
 	AppendDirectly = iota
 	AppendWithAbort
 	Abort
+	AbortWithAbort
 )
 
 func (s *SVMState) TryAppend(tx *Transaction, version int) TryAppendResult {
+	// 如果交易获取到的版本号超过了自己的id，说明前面所有相关交易都要abort，包括自己
+	if version > tx.GetId() {
+		return AbortWithAbort
+	}
 	checkResult := s.CheckVersion(version)
 	switch checkResult {
 	case Latest:
@@ -134,6 +160,16 @@ func (s *SVMState) ProcessTransaction(tx *Transaction, checkResult TryAppendResu
 			}
 		}
 		s.Append(tx, tx.GetId())
+	case AbortWithAbort:
+		for i := len(s.txs) - 1; i >= 0; i-- {
+			if s.txs[i].GetId() > tx.GetId() {
+				s.txs[i].SetAbort()
+			} else {
+				// 本身已保证有序
+				break
+			}
+		}
+		tx.SetAbort()
 	default:
 		panic("Invalid Params")
 	}
@@ -167,10 +203,7 @@ func (s *SVM) Lock(keys []string) {
 		}
 		if !flag {
 			s.UnLock(successLock)
-			tmp := 0
-			for k := 0; k < 100000; k++ {
-				tmp++
-			}
+			Sys.GoRoutineSleep()
 		} else {
 			break
 		}
@@ -215,10 +248,26 @@ func (s *SVM) Commit(tx *Transaction, versions map[string]int) {
 	}
 
 }
+func (s *SVM) CheckReverse() {
+	for address, _ := range s.Address2Transactions {
+		if len(s.Address2Transactions[address].GetTxs()) == 0 {
+			continue
+		} else {
+			for i := 0; i < len(s.Address2Transactions[address].GetTxs()); i++ {
+
+			}
+		}
+	}
+}
 func (s *SVM) CommitLastWriteToDB() {
 	for address, svmValue := range s.Address2Transactions {
 		if svmValue.lastWriteFlag {
 			Smallbank.GlobalSmallBank.Write(address, svmValue.lastWrite)
 		}
+	}
+}
+func (s *SVM) Reset() {
+	for _, svmValue := range s.Address2Transactions {
+		svmValue.Reset()
 	}
 }

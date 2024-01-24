@@ -77,3 +77,11 @@ func (t *Transaction) Reset() {
 	t.abort = false
 	t.sequence = -1
 }
+func (t *Transaction) HasWrite() bool {
+	for _, op := range t.Ops {
+		if op.Type == OpWrite {
+			return true
+		}
+	}
+	return false
+}

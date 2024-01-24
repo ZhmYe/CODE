@@ -1,0 +1,28 @@
+Concurrency=128
+mode=Default
+skew=0.60
+	Tx Number=10000	Time=71.557918ms	Abort Rate=2.51
+
+skew=0.80
+	Tx Number=10000	Time=72.047673ms	Abort Rate=10.57
+
+skew=0.99
+	Tx Number=10000	Time=70.823755ms	Abort Rate=27.80
+mode=PreBatched
+skew=0.60
+	Tx Number=10000	Time=112.602788ms	Abort Rate=43.56
+
+skew=0.80
+	Tx Number=10000	Time=112.502808ms	Abort Rate=55.07
+
+skew=0.99
+	Tx Number=10000	Time=111.260875ms	Abort Rate=69.18
+mode=Preemptive
+skew=0.60
+	Tx Number=10000	Time=60.830158ms	Abort Rate=6.55
+
+skew=0.80
+	Tx Number=10000	Time=63.117992ms	Abort Rate=19.48
+
+skew=0.99
+	Tx Number=10000	Time=66.160198ms	Abort Rate=40.91
