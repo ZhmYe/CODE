@@ -55,6 +55,12 @@ func SetCPU(n int) int {
 	fmt.Printf("Set CPU Number：%d\n", runtime.GOMAXPROCS(-1))
 	return numCpus
 }
+func GoRoutineLittleSleep() {
+	tmp := 0
+	for k := 0; k < 50000; k++ {
+		tmp++
+	}
+}
 func GoRoutineSleep() {
 	tmp := 0
 	for k := 0; k < 100000; k++ {

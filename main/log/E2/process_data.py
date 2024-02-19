@@ -99,7 +99,8 @@ def process(directory):
                     tps_data[skew]["complete"].append(blockSize * (1 - each_data["abort_rate"][0] / 100) / each_data["latency"][0] * 1000)
                     tps_data[skew]["optimal"].append(blockSize * (1 - each_data["abort_rate"][1] / 100) / each_data["latency"][1] * 1000)
 
-    writeExcel(abort_datas, directory[2:], directory)
+    writeExcel(abort_datas, directory[2:] + "_abort", directory)
+    writeExcel(tps_data, directory[2:] + "_tps", directory)
     for skew in abort_datas:
         drawFigure(abort_datas[skew], "{}/abort_skew_{}.png".format(directory, skew), block_size_index, "Abort Rate(%)")
     for skew in tps_data:

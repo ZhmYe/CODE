@@ -138,19 +138,35 @@ func (i *Instance) RunInPreBatched() {
 			tmpBatchItem := batch[b]
 			go func(batchTransctions []*Transaction) {
 				defer wg4batch.Done()
-				// 串行相当于并发度为1
+				buffer := make(map[string]string)
 				for _, tx := range batchTransctions {
 					Sys.GoRoutineSleep()
 					for _, op := range tx.Ops {
 						if op.Type == Blockchain.OpRead {
-							readResult, _ := strconv.Atoi(Smallbank.GlobalSmallBank.Read(op.Key))
-							op.ReadResult = strconv.Itoa(readResult)
+							readResult, exist := buffer[op.Key]
+							if exist {
+								Sys.GoRoutineLittleSleep()
+								op.ReadResult = readResult
+							} else {
+								tmpReadResult, _ := strconv.Atoi(Smallbank.GlobalSmallBank.Read(op.Key))
+								buffer[op.Key] = strconv.Itoa(tmpReadResult)
+								op.ReadResult = buffer[op.Key]
+							}
 						}
 						if op.Type == Blockchain.OpWrite {
-							readResult, _ := strconv.Atoi(Smallbank.GlobalSmallBank.Read(op.Key))
-							amount, _ := strconv.Atoi(op.Val)
-							WriteResult := readResult + amount
-							op.WriteResult = strconv.Itoa(WriteResult)
+							readResult, exist := buffer[op.Key]
+							if exist {
+								Sys.GoRoutineLittleSleep()
+								tmpReadResult, _ := strconv.Atoi(readResult)
+								amount, _ := strconv.Atoi(op.Val)
+								WriteResult := tmpReadResult + amount
+								op.WriteResult = strconv.Itoa(WriteResult)
+							} else {
+								tmpReadResult, _ := strconv.Atoi(Smallbank.GlobalSmallBank.Read(op.Key))
+								amount, _ := strconv.Atoi(op.Val)
+								WriteResult := tmpReadResult + amount
+								op.WriteResult = strconv.Itoa(WriteResult)
+							}
 						}
 					}
 				}
